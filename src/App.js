@@ -6,7 +6,7 @@ import Error from "./components/Error";
 import StartScreen from "./components/StartScreen";
 import Questions from "./components/Questions";
 
-const initialState = { questions: [], status: "loading" };
+const initialState = { questions: [], status: "loading", index: 0 }; // index -> used to keep track current question
 
 function reducer(state, action) {
   switch (action.type) {
@@ -33,7 +33,7 @@ function reducer(state, action) {
 
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { questions, status } = state; // destructuring state
+  const { questions, status, index } = state; // destructuring state
 
   useEffect(() => {
     async function fetchQuestions() {
@@ -58,7 +58,9 @@ export default function App() {
         {status === "ready" && (
           <StartScreen numQuestions={questions?.length} dispatch={dispatch} />
         )}
-        {status === "active" && <Questions />}
+        {status === "active" && (
+          <Questions question={questions.at(index)} dispatch={dispatch} />
+        )}
       </Main>
     </div>
   );
