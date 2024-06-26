@@ -6,7 +6,13 @@ import Error from "./components/Error";
 import StartScreen from "./components/StartScreen";
 import Questions from "./components/Questions";
 
-const initialState = { questions: [], status: "loading", index: 0 }; // index -> used to keep track current question
+const initialState = {
+  questions: [],
+  status: "loading",
+  index: 0,
+  answer: null,
+  score: 0,
+}; // index -> used to keep track current question
 
 function reducer(state, action) {
   switch (action.type) {
@@ -26,6 +32,14 @@ function reducer(state, action) {
         ...state,
         status: "active",
       };
+    case "newAnswer":
+      const { points, correctOption } = state.questions.at(state.index);
+      return {
+        ...state,
+        answer: action.payload,
+        score:
+          action.payload === correctOption ? state.score + points : state.score, // score updating
+      };
     default:
       throw new Error("Unknown action");
   }
@@ -33,7 +47,7 @@ function reducer(state, action) {
 
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { questions, status, index } = state; // destructuring state
+  const { questions, status, index, answer } = state; // destructuring state
 
   useEffect(() => {
     async function fetchQuestions() {
@@ -59,7 +73,11 @@ export default function App() {
           <StartScreen numQuestions={questions?.length} dispatch={dispatch} />
         )}
         {status === "active" && (
-          <Questions question={questions.at(index)} dispatch={dispatch} />
+          <Questions
+            question={questions.at(index)}
+            dispatch={dispatch}
+            answer={answer}
+          />
         )}
       </Main>
     </div>

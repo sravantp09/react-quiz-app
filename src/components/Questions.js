@@ -1,18 +1,31 @@
-export default function Questions({ question, dispatch }) {
+export default function Questions({ question, dispatch, answer }) {
   const { question: currQuestion, options, correctOption } = question;
+
   return (
     <div>
       <h4>{currQuestion}</h4>
-      <Options options={options} />
+      <Options
+        options={options}
+        dispatch={dispatch}
+        answer={answer}
+        correctOption={correctOption}
+      />
     </div>
   );
 }
 
-function Options({ options }) {
+function Options({ options, dispatch, answer, correctOption }) {
   return (
     <div className="options">
-      {options.map((option) => (
-        <button className="btn btn-option" key={option}>
+      {options.map((option, index) => (
+        <button
+          className={`btn btn-option ${answer == index ? "answer" : ""} ${
+            answer && (index == correctOption ? "correct" : "wrong")
+          }`}
+          key={option}
+          onClick={() => dispatch({ type: "newAnswer", payload: index })}
+          disabled={answer}
+        >
           {option}
         </button>
       ))}
