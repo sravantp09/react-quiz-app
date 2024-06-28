@@ -5,6 +5,7 @@ import Loader from "./components/Loader";
 import Error from "./components/Error";
 import StartScreen from "./components/StartScreen";
 import Questions from "./components/Questions";
+import Button from "./components/Button";
 
 const initialState = {
   questions: [],
@@ -34,12 +35,29 @@ function reducer(state, action) {
       };
     case "newAnswer":
       const { points, correctOption } = state.questions.at(state.index);
+
       return {
         ...state,
         answer: action.payload,
         score:
           action.payload === correctOption ? state.score + points : state.score, // score updating
       };
+    case "nextQuestion":
+      const newIndex = state.index + 1;
+
+      if (newIndex > state.questions.length - 1) {
+        return {
+          ...state,
+          answer: null,
+          status: "finished",
+        };
+      } else {
+        return {
+          ...state,
+          index: newIndex,
+          answer: null,
+        };
+      }
     default:
       throw new Error("Unknown action");
   }
@@ -79,6 +97,8 @@ export default function App() {
             answer={answer}
           />
         )}
+        {status === "finished" && <p>Done</p>}
+        {answer !== null && <Button dispatch={dispatch} />}
       </Main>
     </div>
   );

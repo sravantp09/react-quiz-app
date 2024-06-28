@@ -20,11 +20,11 @@ function Options({ options, dispatch, answer, correctOption }) {
       {options.map((option, index) => (
         <button
           className={`btn btn-option ${answer == index ? "answer" : ""} ${
-            answer && (index == correctOption ? "correct" : "wrong")
+            answer !== null && (index == correctOption ? "correct" : "wrong")
           }`}
           key={option}
           onClick={() => dispatch({ type: "newAnswer", payload: index })}
-          disabled={answer}
+          disabled={answer !== null}
         >
           {option}
         </button>
