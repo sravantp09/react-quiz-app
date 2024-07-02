@@ -109,6 +109,7 @@ export default function App() {
               totalQuestions={questions.length}
               points={score}
               totalPoints={totalScore}
+              answer={answer}
             />
             <Questions
               question={questions.at(index)}

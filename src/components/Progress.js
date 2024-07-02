@@ -5,10 +5,14 @@ export default function Progress({
   totalQuestions,
   points,
   totalPoints,
+  answer,
 }) {
   return (
     <>
-      <ProgressBar start={index} limit={totalQuestions} />
+      <ProgressBar
+        start={answer !== null ? index + 1 : index} // makes the progress bar moves when we click on the answer
+        limit={totalQuestions}
+      />
       <div className="progress">
         <p>
           Questions{" "}
