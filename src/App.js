@@ -7,6 +7,7 @@ import StartScreen from "./components/StartScreen";
 import Questions from "./components/Questions";
 import Button from "./components/Button";
 import Progress from "./components/Progress";
+import FinishScreen from "./components/FinishScreen";
 
 const initialState = {
   questions: [],
@@ -14,6 +15,7 @@ const initialState = {
   index: 0,
   answer: null,
   score: 0,
+  highScore: 0,
 }; // index -> used to keep track current question
 
 function reducer(state, action) {
@@ -51,6 +53,8 @@ function reducer(state, action) {
           ...state,
           answer: null,
           status: "finished",
+          highScore:
+            state.score > state.highScore ? state.score : state.highScore,
         };
       } else {
         return {
@@ -59,6 +63,14 @@ function reducer(state, action) {
           answer: null,
         };
       }
+    case "restartQuiz":
+      return {
+        ...state,
+        status: "ready",
+        index: 0,
+        answer: null,
+        score: 0,
+      };
     default:
       throw new Error("Unknown action");
   }
@@ -70,7 +82,7 @@ function calculateTotalScore(questions) {
 
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { questions, status, index, answer, score } = state; // destructuring state
+  const { questions, status, index, answer, score, highScore } = state; // destructuring state
   let totalScore = 0;
 
   // Calculating total score
@@ -117,10 +129,23 @@ export default function App() {
               answer={answer}
             />
             {/* Next Button */}
-            {answer !== null && <Button dispatch={dispatch} />}
+            {answer !== null && (
+              <Button
+                index={index}
+                totalQuestions={questions.length}
+                dispatch={dispatch}
+              />
+            )}
           </>
         )}
-        {status === "finished" && <p>Done</p>}
+        {status === "finished" && (
+          <FinishScreen
+            points={score}
+            maxPoints={totalScore}
+            highScore={highScore}
+            dispatch={dispatch}
+          />
+        )}
       </Main>
     </div>
   );
