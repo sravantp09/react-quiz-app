@@ -6,10 +6,11 @@ import Error from "./components/Error";
 import StartScreen from "./components/StartScreen";
 import Questions from "./components/Questions";
 import Button from "./components/Button";
+import Progress from "./components/Progress";
 
 const initialState = {
   questions: [],
-  status: "loading",
+  status: "loading", // Can have other states like, 'ready', 'error', 'active', 'finished'
   index: 0,
   answer: null,
   score: 0,
@@ -63,9 +64,19 @@ function reducer(state, action) {
   }
 }
 
+function calculateTotalScore(questions) {
+  return questions.reduce((acc, que) => acc + que.points, 0);
+}
+
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { questions, status, index, answer } = state; // destructuring state
+  const { questions, status, index, answer, score } = state; // destructuring state
+  let totalScore = 0;
+
+  // Calculating total score
+  if (questions.length > 0) {
+    totalScore = calculateTotalScore(questions);
+  }
 
   useEffect(() => {
     async function fetchQuestions() {
@@ -91,14 +102,24 @@ export default function App() {
           <StartScreen numQuestions={questions?.length} dispatch={dispatch} />
         )}
         {status === "active" && (
-          <Questions
-            question={questions.at(index)}
-            dispatch={dispatch}
-            answer={answer}
-          />
+          <>
+            {/* progress bar and scores out of total score */}
+            <Progress
+              index={index}
+              totalQuestions={questions.length}
+              points={score}
+              totalPoints={totalScore}
+            />
+            <Questions
+              question={questions.at(index)}
+              dispatch={dispatch}
+              answer={answer}
+            />
+            {/* Next Button */}
+            {answer !== null && <Button dispatch={dispatch} />}
+          </>
         )}
         {status === "finished" && <p>Done</p>}
-        {answer !== null && <Button dispatch={dispatch} />}
       </Main>
     </div>
   );
