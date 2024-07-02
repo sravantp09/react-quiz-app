@@ -257,3 +257,9 @@ progress {
   font-size: inherit;
   padding: 0.8rem;
 }
+
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
